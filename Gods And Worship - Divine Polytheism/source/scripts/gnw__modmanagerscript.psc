@@ -32,6 +32,7 @@ Import Utility_ExtendedUtils
 GlobalVariable property Survival_ModeEnabled auto
 
 Int property GlobalCurrentGodIndex=-1 Auto Conditional hidden
+Int property iDivineCount = 9 AutoReadOnly	;POLYTHEISM: god indexes below this are Divines, who can be worshipped together
 Int property GlobalTempleHomeQuestStarted Auto Conditional hidden
 bool property IsModReady auto conditional hidden
 bool property IsVampireLord auto conditional hidden
@@ -421,7 +422,7 @@ Function ShowOfferingPrompt(ObjectReference shrine, int godIndex, bool showSpeci
 		
 	;--Normal praying--
 	Else		
-		If (GlobalCurrentGodIndex != godIndex)
+		If (!godQuestScripts[godIndex].bIsCurrentGod)	;POLYTHEISM: was GlobalCurrentGodIndex != godIndex
 			choice = ShowOfferingMenu(GnW_MSG_OfferingPrompt_choose, godIndex)
 		ElseIf (godQuestScripts[godIndex].bCanMakeOffering)
 			choice = ShowOfferingMenu(GnW_MSG_OfferingPrompt, godIndex)
@@ -445,7 +446,7 @@ Function ShowOfferingPrompt(ObjectReference shrine, int godIndex, bool showSpeci
 	;--Update god quest, get blessing--
 	If (!survivalEnabled || prayed || madeOffering)
 		Pray(godIndex, madeOffering)
-		shrine.Activate(Game.GetPlayer())
+		GiveShrineBlessing(shrine, godIndex)
 	EndIf
 
 	;--Join temple, if attempting to--
@@ -460,9 +461,20 @@ Function ShowOfferingPrompt(ObjectReference shrine, int godIndex, bool showSpeci
 
 EndFunction
 
+Function GiveShrineBlessing(ObjectReference shrine, int godIndex)
+	;POLYTHEISM: Divine blessings are cast directly instead of activating the shrine. Requiem's TempleBlessingScript calls
+	;DispelAllSpells() before casting, which wiped every other blessing no matter what the magic effects allow.
+	If (IsDivine(godIndex))
+		godQuestScripts[godIndex].DispelBlessings()	;replace this god's own shrine/meditation blessing instead of doubling it
+		godQuestScripts[godIndex].GiveShrineBlessing()
+	Else
+		shrine.Activate(Game.GetPlayer())
+	EndIf
+EndFunction
+
 Function ChooseGodRemote(ObjectReference shrine, int godIndex)
 	Pray(godIndex, true)
-	shrine.Activate(Game.GetPlayer())
+	GiveShrineBlessing(shrine, godIndex)
 	PlayOfferingBow()
 EndFunction
 
@@ -565,7 +577,14 @@ Function Pray(Int godIndex, bool madeOffering=true)
 EndFunction
 
 Function Meditate()
-	godQuestScripts[GlobalCurrentGodIndex].Meditate()
+	;POLYTHEISM: meditation counts for every god you worship
+	int i = 0
+	While (i < godQuestScripts.Length)
+		If (godQuestScripts[i].bIsCurrentGod)
+			godQuestScripts[i].Meditate()
+		EndIf
+		i += 1
+	EndWhile
 EndFunction
 
 Function PrayWhileShunned(Int godIndex)
@@ -591,20 +610,27 @@ Function CompleteTempleErrand(Int points, Int templeIndex)
 		return
 	EndIf
 
-	If (templeIndex == joinTempleManager.indexDivines && GlobalCurrentGodIndex < 9)
-		godQuestScripts[GlobalCurrentGodIndex].UpdateAffinity(points)
+	;POLYTHEISM: check each Divine's own flag rather than the primary god
+	If (templeIndex == joinTempleManager.indexDivines)
+		int i = 0
+		While (i < iDivineCount)
+			If (godQuestScripts[i].bIsCurrentGod)
+				godQuestScripts[i].UpdateAffinity(points)
+			EndIf
+			i += 1
+		EndWhile
 
-	ElseIf (templeIndex == joinTempleManager.indexDibella && GlobalCurrentGodIndex == 2)
-		godQuestScripts[GlobalCurrentGodIndex].UpdateAffinity(points)
+	ElseIf (templeIndex == joinTempleManager.indexDibella && godQuestScripts[2].bIsCurrentGod)
+		godQuestScripts[2].UpdateAffinity(points)
 
-	ElseIf (templeIndex == joinTempleManager.indexKynareth && GlobalCurrentGodIndex == 4)
-		godQuestScripts[GlobalCurrentGodIndex].UpdateAffinity(points)
+	ElseIf (templeIndex == joinTempleManager.indexKynareth && godQuestScripts[4].bIsCurrentGod)
+		godQuestScripts[4].UpdateAffinity(points)
 
-	ElseIf (templeIndex == joinTempleManager.indexMara && GlobalCurrentGodIndex == 5)
-		godQuestScripts[GlobalCurrentGodIndex].UpdateAffinity(points)
+	ElseIf (templeIndex == joinTempleManager.indexMara && godQuestScripts[5].bIsCurrentGod)
+		godQuestScripts[5].UpdateAffinity(points)
 
-	ElseIf (templeIndex == joinTempleManager.indexTalos && GlobalCurrentGodIndex == 7)
-		godQuestScripts[GlobalCurrentGodIndex].UpdateAffinity(points)
+	ElseIf (templeIndex == joinTempleManager.indexTalos && godQuestScripts[7].bIsCurrentGod)
+		godQuestScripts[7].UpdateAffinity(points)
 
 	ElseIf (templeIndex == joinTempleManager.indexReclamations && (GlobalCurrentGodIndex == 9 || GlobalCurrentGodIndex == 10 || GlobalCurrentGodIndex == 16))
 		godQuestScripts[GlobalCurrentGodIndex].UpdateAffinity(points)
@@ -874,13 +900,26 @@ EndEvent
 ;----------------------------------------------------------------------------------
 ;---Helper Functions---
 ;----------------------------------------------------------------------------------
+Bool Function IsDivine(int godIndex)
+	Return godIndex >= 0 && godIndex < iDivineCount
+EndFunction
+
 Function SwitchCurrentGod(int godIndex)
-	;Send -1 when removing your chosen god (entering pariah state)
+	;Send -1 when removing all chosen gods
+	;POLYTHEISM: the Divines can be worshipped together. Choosing a Divine keeps the other Divines and only drops a Daedric Prince.
+	;Choosing a Daedric Prince drops everyone else. GlobalCurrentGodIndex is the primary (most recently chosen) god.
 	GlobalCurrentGodIndex = godIndex
+	Bool keepDivines = IsDivine(godIndex)
 
 	int i = 0
 	While (i < godQuestScripts.Length)
-		godQuestScripts[i].SetCurrentGod(false)
+		If (i != godIndex && !(keepDivines && IsDivine(i)))
+			godQuestScripts[i].SetCurrentGod(false)
+			If (keepDivines && godQuestScripts[i].player)
+				;a Divine's blessing can't dispel a Daedric Prince's blessing any more, so drop it by hand when turning to the Divines
+				godQuestScripts[i].DispelBlessings()
+			EndIf
+		EndIf
 		i += 1
 	EndWhile
 
@@ -899,6 +938,39 @@ Function SwitchCurrentGod(int godIndex)
 	EndIf
 
 	ShowDebugMessage("Switched god to: " + GlobalCurrentGodIndex)
+EndFunction
+
+Function RemoveGod(int godIndex)
+	;POLYTHEISM: drop a single god (entering pariah state with them), keeping any other Divines you worship
+	godQuestScripts[godIndex].SetCurrentGod(false)
+
+	;Find the highest ranked remaining Divine
+	int newPrimary = -1
+	int i = 0
+	While (i < iDivineCount)
+		If (godQuestScripts[i].bIsCurrentGod)
+			If (newPrimary == -1 || godQuestScripts[i].affinityRank > godQuestScripts[newPrimary].affinityRank)
+				newPrimary = i
+			EndIf
+		EndIf
+		i += 1
+	EndWhile
+
+	If (newPrimary == -1)
+		SwitchCurrentGod(-1)
+		Return
+	EndIf
+
+	If (GlobalCurrentGodIndex == godIndex)
+		GlobalCurrentGodIndex = newPrimary
+		aliasCurrentGod.ForceRefTo(godActors[newPrimary])
+		aliasCurrentGod_templeHome.ForceRefTo(godActors[newPrimary])
+	EndIf
+
+	;The removed god took the shared Meditate power with them, so have a remaining god hand it back
+	godQuestScripts[GlobalCurrentGodIndex].UpdatePowersAndAbilities()
+
+	ShowDebugMessage("Removed god " + godIndex + ", primary god is now: " + GlobalCurrentGodIndex)
 EndFunction
 
 Int Function GetRankForCurrentGod()

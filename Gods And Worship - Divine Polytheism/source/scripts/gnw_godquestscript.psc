@@ -303,6 +303,8 @@ EndFunction
 Function Meditate()	
 ;	LogDebug("Meditate() - effect:" + spMeditateEff.GetName())
 
+	player.DispelSpell(spBlessing)	;POLYTHEISM: the Divines' blessings no longer dispel each other, so replace this god's own shrine blessing by hand
+
 	spMeditateEff.Cast(player, player)
 	msgBlessing.Show()
 
@@ -321,6 +323,19 @@ Function Meditate()
 	EndIf
 
 ;		LogDebug("Meditate() - end of function")
+EndFunction
+
+;------------------------------------------------------
+Function DispelBlessings()
+	;POLYTHEISM: called by the mod manager, which now decides which shrine/meditation blessings may coexist
+	player.DispelSpell(spBlessing)
+	player.DispelSpell(spMeditateEff)
+EndFunction
+
+Function GiveShrineBlessing()
+	;POLYTHEISM: what activating the shrine does, minus Requiem's DispelAllSpells()
+	spBlessing.Cast(player, player)
+	msgBlessing.Show()
 EndFunction
 
 ;------------------------------------------------------
@@ -710,8 +725,8 @@ Function EnterPariahState()
 	bIsPariah = true
 	timerPariah = maxPariahTime
 	timerNeglect = 0.0
-	modManagerScript.SwitchCurrentGod(-1)
-	
+	modManagerScript.RemoveGod(_godIndex)	;POLYTHEISM: was SwitchCurrentGod(-1), which dropped every god
+
 	If (pilgrimageQuest.IsRunning())		;Fail pilgrimage quest, if running
 		pilgrimageQuest.SetStage(500)
 	EndIf

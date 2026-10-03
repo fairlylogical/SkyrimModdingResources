@@ -17,7 +17,7 @@ Event OnStoryKillActor(ObjectReference akVictim, ObjectReference akKiller, Locat
 			;Triggered by killing undead, daedra, and werebeasts - check SM node for conditions
 			modManagerScript.KillSpecial(victim)
 			
-			If (modManagerScript.GlobalCurrentGodIndex == 6 && stendarrQuestScript.affinityRank >= 2 && GnW_GLO_AbilityStendarr_numKills.GetValueInt() < 50)
+			If (stendarrQuestScript.bIsCurrentGod && stendarrQuestScript.affinityRank >= 2 && GnW_GLO_AbilityStendarr_numKills.GetValueInt() < 50)
 				If (!victim.IsCommandedActor() && (victim.HasKeyword(ActorTypeDaedra) || victim.HasKeyword(vampire) || \
 					victim.IsInFaction(WerewolfFaction) || victim.IsInFaction(DLC2dunFrostmoonWerewolvesFaction) || victim.IsInFaction(DLC2TribalWerebearFaction)))
 						Int kills = GnW_GLO_AbilityStendarr_numKills.GetValueInt() + 1
