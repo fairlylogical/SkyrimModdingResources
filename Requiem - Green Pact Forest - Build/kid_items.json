@@ -1,0 +1,476 @@
+{
+ "CanisRoot01": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x6ABCB"
+ },
+ "CreepClusterRoot": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0xB2183"
+ },
+ "deathBell": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x516C8"
+ },
+ "DragonsTongue": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x889A2"
+ },
+ "HangingMoss": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x57F91"
+ },
+ "JazBay": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x6AC4A"
+ },
+ "JuniperBerries": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x5076E"
+ },
+ "Lavender": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x45C28"
+ },
+ "MountainFlower01Blue": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x77E1C"
+ },
+ "MountainFlower01Purple": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x77E1E"
+ },
+ "MountainFlower01Red": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x77E1D"
+ },
+ "Nightshade": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x2F44C"
+ },
+ "Snowberry": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x1B3BD"
+ },
+ "SpikyGrass01": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x83E64"
+ },
+ "Thistle01": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x134AA"
+ },
+ "TundraCotton": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x3F7F8"
+ },
+ "DLC1MountainFlower01Yellow": {
+  "type": "Ingredient",
+  "plugin": "Dawnguard.esm",
+  "id": "0x2A78"
+ },
+ "DLC01GlowPlant01Ingredient": {
+  "type": "Ingredient",
+  "plugin": "Dawnguard.esm",
+  "id": "0xB097"
+ },
+ "DLC2AshCreepCluster": {
+  "type": "Ingredient",
+  "plugin": "Dragonborn.esm",
+  "id": "0x1CD74"
+ },
+ "DLC2HangingMoss": {
+  "type": "Ingredient",
+  "plugin": "Dragonborn.esm",
+  "id": "0x1FF75"
+ },
+ "DLC2Scathecraw01": {
+  "type": "Ingredient",
+  "plugin": "Dragonborn.esm",
+  "id": "0x17E97"
+ },
+ "DLC2SpikyGrassAsh01": {
+  "type": "Ingredient",
+  "plugin": "Dragonborn.esm",
+  "id": "0x16E26"
+ },
+ "DLC2TramaRoot01": {
+  "type": "Ingredient",
+  "plugin": "Dragonborn.esm",
+  "id": "0x17008"
+ },
+ "ccBGS_RootRotScaleIngredient": {
+  "type": "Ingredient",
+  "plugin": "Update.esm",
+  "id": "0x306D"
+ },
+ "ccBGS_RootScreamingMawIngredient": {
+  "type": "Ingredient",
+  "plugin": "Update.esm",
+  "id": "0x306E"
+ },
+ "ccBGS_RootThornHookIngredient": {
+  "type": "Ingredient",
+  "plugin": "Update.esm",
+  "id": "0x306F"
+ },
+ "Wheat": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x4B0BA"
+ },
+ "REQ_Food_Vegan_Cabbage": {
+  "type": "Potion",
+  "plugin": "Skyrim.esm",
+  "id": "0x64B3F"
+ },
+ "REQ_Food_Vegan_Gourd": {
+  "type": "Potion",
+  "plugin": "Skyrim.esm",
+  "id": "0x10D666"
+ },
+ "REQ_Food_Vegan_LeekRaw": {
+  "type": "Potion",
+  "plugin": "Skyrim.esm",
+  "id": "0x669A5"
+ },
+ "REQ_Food_Vegan_PotatoRaw": {
+  "type": "Potion",
+  "plugin": "Skyrim.esm",
+  "id": "0x64B41"
+ },
+ "REQ_Food_Vegan_AshYam": {
+  "type": "Potion",
+  "plugin": "Dragonborn.esm",
+  "id": "0x206E7"
+ },
+ "Nirnroot": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x59B86"
+ },
+ "NirnrootRed": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0xB701A"
+ },
+ "TreeFloraNirnroot01": {
+  "type": "Activator",
+  "plugin": "Skyrim.esm",
+  "id": "0xE1FB2"
+ },
+ "TreeFloraNirnrootRed01": {
+  "type": "Activator",
+  "plugin": "Skyrim.esm",
+  "id": "0xB6FB9"
+ },
+ "Mushroom01": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x4DA00"
+ },
+ "Mushroom02": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x4DA20"
+ },
+ "Mushroom03": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x4DA22"
+ },
+ "Mushroom04": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x4DA23"
+ },
+ "Mushroom05": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x4DA24"
+ },
+ "Mushroom06": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x4DA25"
+ },
+ "GlowingMushroom": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x7EE01"
+ },
+ "MoraTapinellaBits": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0xEC870"
+ },
+ "ScalyPholiotaBits": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x6F950"
+ },
+ "SwampFungalPod01": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x7E8B7"
+ },
+ "GiantLichen": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x7E8C1"
+ },
+ "DLC1FoodSoulHusk": {
+  "type": "Potion",
+  "plugin": "Dawnguard.esm",
+  "id": "0x14DC4"
+ },
+ "ElvesEar": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x34D31"
+ },
+ "FrostMirriam": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x34D32"
+ },
+ "Garlic": {
+  "type": "Ingredient",
+  "plugin": "Skyrim.esm",
+  "id": "0x34D22"
+ },
+ "BYOHHouseFoodCabbage": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB2A"
+ },
+ "BYOHHouseFoodCarrots": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB2B"
+ },
+ "BYOHHouseFoodGourd": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB2C"
+ },
+ "BYOHHouseFoodLeek": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB2D"
+ },
+ "BYOHHouseFoodPotato": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB2E"
+ },
+ "BYOHHouseIngredientCanisRoot": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB2F"
+ },
+ "BYOHHouseIngredientCotton": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB30"
+ },
+ "BYOHHouseIngredientCreepCluster": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB31"
+ },
+ "BYOHHouseIngredientDeathbell": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB32"
+ },
+ "BYOHHouseIngredientDragonsTongue": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB33"
+ },
+ "BYOHHouseIngredientFungalPod": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB34"
+ },
+ "BYOHHouseIngredientGiantLichen": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB35"
+ },
+ "BYOHHouseIngredientGlowingMushroom": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB36"
+ },
+ "BYOHHouseIngredientJazbay": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB37"
+ },
+ "BYOHHouseIngredientJuniperBerries": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB38"
+ },
+ "BYOHHouseIngredientLavender": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB39"
+ },
+ "BYOHHouseIngredientMoraTapinella": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB3A"
+ },
+ "BYOHHouseIngredientMountainFlowerBlue": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB3B"
+ },
+ "BYOHHouseIngredientMountainFlowerPurple": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB3C"
+ },
+ "BYOHHouseIngredientMountainFlowerRed": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB3D"
+ },
+ "BYOHHouseIngredientMushroom01": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB3E"
+ },
+ "BYOHHouseIngredientMushroom02": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB3F"
+ },
+ "BYOHHouseIngredientMushroom03": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB40"
+ },
+ "BYOHHouseIngredientMushroom04": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB41"
+ },
+ "BYOHHouseIngredientMushroom05": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB42"
+ },
+ "BYOHHouseIngredientMushroom06": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB43"
+ },
+ "BYOHHouseIngredientNightshade": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB44"
+ },
+ "BYOHHouseIngredientScalyPholiotaBits": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB45"
+ },
+ "BYOHHouseIngredientSnowberry": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB46"
+ },
+ "BYOHHouseIngredientSpikyGrass": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB47"
+ },
+ "BYOHHouseIngredientThistle": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB48"
+ },
+ "BYOHHouseIngredientWheat": {
+  "type": "Misc Item",
+  "plugin": "HearthFires.esm",
+  "id": "0xB49"
+ },
+ "WoodChoppingBlock": {
+  "type": "Furniture",
+  "plugin": "Skyrim.esm",
+  "id": "0x7022E"
+ },
+ "WoodChoppingBlockSnow": {
+  "type": "Furniture",
+  "plugin": "Skyrim.esm",
+  "id": "0xA91BF"
+ },
+ "DLC2WoodChoppingBlockAsh": {
+  "type": "Furniture",
+  "plugin": "Dragonborn.esm",
+  "id": "0x3828B"
+ },
+ "WoodChoppingBlockCOPY0000": {
+  "type": "Furniture",
+  "plugin": "Skyrim.esm",
+  "id": "0x10F575"
+ },
+ "DLC1CanticleBarkFake": {
+  "type": "Misc Item",
+  "plugin": "Dawnguard.esm",
+  "id": "0x1932B"
+ },
+ "_planters": [
+  "BYOHHouseFoodCabbage",
+  "BYOHHouseFoodCarrots",
+  "BYOHHouseFoodGourd",
+  "BYOHHouseFoodLeek",
+  "BYOHHouseFoodPotato",
+  "BYOHHouseIngredientCanisRoot",
+  "BYOHHouseIngredientCotton",
+  "BYOHHouseIngredientCreepCluster",
+  "BYOHHouseIngredientDeathbell",
+  "BYOHHouseIngredientDragonsTongue",
+  "BYOHHouseIngredientFungalPod",
+  "BYOHHouseIngredientGiantLichen",
+  "BYOHHouseIngredientGlowingMushroom",
+  "BYOHHouseIngredientJazbay",
+  "BYOHHouseIngredientJuniperBerries",
+  "BYOHHouseIngredientLavender",
+  "BYOHHouseIngredientMoraTapinella",
+  "BYOHHouseIngredientMountainFlowerBlue",
+  "BYOHHouseIngredientMountainFlowerPurple",
+  "BYOHHouseIngredientMountainFlowerRed",
+  "BYOHHouseIngredientMushroom01",
+  "BYOHHouseIngredientMushroom02",
+  "BYOHHouseIngredientMushroom03",
+  "BYOHHouseIngredientMushroom04",
+  "BYOHHouseIngredientMushroom05",
+  "BYOHHouseIngredientMushroom06",
+  "BYOHHouseIngredientNightshade",
+  "BYOHHouseIngredientScalyPholiotaBits",
+  "BYOHHouseIngredientSnowberry",
+  "BYOHHouseIngredientSpikyGrass",
+  "BYOHHouseIngredientThistle",
+  "BYOHHouseIngredientWheat"
+ ]
+}
