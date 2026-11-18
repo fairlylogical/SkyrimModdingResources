@@ -8,6 +8,8 @@ HDPT_TYPE_IDS = {v.lower(): k for k, v in HDPT_TYPES.items()}
 FORMID_FIELDS = {
     'HDPT': {'HNAM': [0], 'TNAM': [0], 'CNAM': [0], 'RNAM': [0]},
     'FLST': {'LNAM': [0]},
+    'ARMO': {'RNAM': [0], 'MODL': [0], 'KWDA': 'array', 'EITM': [0], 'ETYP': [0], 'BIDS': [0], 'BAMT': [0],
+             'YNAM': [0], 'ZNAM': [0], 'TNAM': [0]},
     'ARMA': {'RNAM': [0], 'MODL': [0], 'NAM0': [0], 'NAM1': [0], 'NAM2': [0], 'NAM3': [0], 'SNDD': [0], 'ONAM': [0]},
     'RACE': {'SPLO': [0], 'WNAM': [0], 'KWDA': 'array', 'VTCK': [0, 4], 'DNAM': [0, 4], 'HCLF': [0, 4],
              'ATKD': [8, 28], 'GNAM': [0], 'NAM4': [0], 'NAM5': [0], 'NAM7': [0], 'ONAM': [0], 'LNAM': [0],
@@ -15,7 +17,7 @@ FORMID_FIELDS = {
              'DFTM': [0], 'DFTF': [0], 'RPRM': [0], 'RPRF': [0], 'TIND': [0], 'TINC': [0], 'NAM8': [0],
              'RNAM': [0], 'WKMV': [0], 'RNMV': [0], 'SWMV': [0], 'FLMV': [0], 'SNMV': [0], 'SPMV': [0], 'ATKR': [0]},
 }
-# In ARMA, MODL is a race FormID (size 4); MOD2..MOD5 are model paths.
+# In ARMA/ARMO, MODL of size 4 is a FormID (race / armor addon); MOD2..MOD5 are model paths.
 
 
 def parse_subs(body):
@@ -142,7 +144,7 @@ def group_bytes(label, recs):
 
 
 # Top-level group order used by the game/CK for the types we emit.
-GROUP_ORDER = ['TXST', 'HDPT', 'RACE', 'FLST', 'ARMA']
+GROUP_ORDER = ['TXST', 'HDPT', 'RACE', 'ARMO', 'FLST', 'ARMA']
 
 VANILLA_ESM = ['skyrim.esm', 'update.esm', 'dawnguard.esm', 'hearthfires.esm', 'dragonborn.esm']
 
@@ -163,6 +165,8 @@ class PatchWriter:
         self.next_obj = 0x800
         self.groups = {}
         self.warnings = []
+        # gid -> local FormID for records absorbed from plugins that are NOT masters (standalone builds)
+        self.redirect = {}
 
     def master_index(self, name):
         for i, m in enumerate(self.masters):
@@ -171,6 +175,8 @@ class PatchWriter:
         raise KeyError('%s is not a master of the patch' % name)
 
     def local(self, gid):
+        if gid in self.redirect:
+            return self.redirect[gid]
         name, obj = gid
         return (self.master_index(name) << 24) | obj
 
@@ -190,7 +196,7 @@ class PatchWriter:
         out = []
         for st, v in subs:
             spec = table.get(st)
-            if rtype == 'ARMA' and st == 'MODL' and len(v) != 4:
+            if rtype in ('ARMA', 'ARMO') and st == 'MODL' and len(v) != 4:
                 spec = None
             if spec:
                 b = bytearray(v)

@@ -13,7 +13,9 @@ config:
     {"shape": "SH_Head",  "out": "...\\head.nif",  "neutral": {"nif": "<standalone head nif>"},
      "diffuse": "textures\\...\\head_makeup.dds"}                                                  # optional texture override
   ],
-  "delta_samples": ["SH_Eyes"]     # optional: tri-neutralised shapes whose sculpt offsets drive "nearest" (default: all tri parts)
+  "delta_samples": ["SH_Eyes"],    # optional: tri-neutralised shapes whose sculpt offsets drive "nearest" (default: all tri parts)
+  "texture_remap": [["textures\\actors\\character\\follower\\", "textures\\actors\\character\\MyRace\\"]]
+                                   # optional, case-insensitive prefix rewrite (standalone mods that relocate textures)
 }
 
 neutral modes - FaceGen geometry has the NPC's sculpt (CK sliders) baked in:
@@ -83,6 +85,14 @@ def strip_shader(path):
 
 
 def main(cfg):
+    remaps = [(a.lower(), b) for a, b in cfg.get('texture_remap', [])]
+    global remap_tex
+    def remap_tex(t):
+        """Optional prefix rewrite of texture paths (for standalone mods that relocate textures)."""
+        for a, b in remaps:
+            if t.lower().startswith(a):
+                return b + t[len(a):]
+        return t
     fg = NifFile(cfg['facegen'])
     sh = {s.name: s for s in fg.shapes}
     parts = cfg['parts']
@@ -171,7 +181,7 @@ def main(cfg):
                 ns.save_alpha_property()
             for k, t in fgs.textures.items():
                 if t:
-                    ns.set_texture(k, t)
+                    ns.set_texture(k, remap_tex(t))
             if p.get('diffuse'):
                 ns.set_texture('Diffuse', p['diffuse'])
         nif.save()
@@ -181,7 +191,7 @@ def main(cfg):
         # ---- verify by reloading
         s = NifFile(dst).shapes[0]
         uvd = max(max(abs(a - b) for a, b in zip(u, w)) for u, w in zip(s.uvs, fgs.uvs))
-        exp_tex = {k: v.lower() for k, v in fgs.textures.items() if v} if has_shader else {}
+        exp_tex = {k: remap_tex(v).lower() for k, v in fgs.textures.items() if v} if has_shader else {}
         if p.get('diffuse') and has_shader:
             exp_tex['Diffuse'] = p['diffuse'].lower()
         checks = {
