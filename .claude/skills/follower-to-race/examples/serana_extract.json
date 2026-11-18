@@ -1,0 +1,100 @@
+{
+ "facegen": "D:\\SkyrimMod\\wabbajack\\mods\\Evigheden - SerketHetyt's Serana Overhaul\\Meshes\\actors\\character\\FaceGenData\\FaceGeom\\Dawnguard.esm\\00002B6C.nif",
+ "out_root": "D:\\SkyrimMod\\wabbajack\\mods\\Evigheden - Morrigan Race Patch",
+ "delta_samples": [
+  "SH_Serana_EyesOuter",
+  "SH_Serana_EyesCaruncula"
+ ],
+ "parts": [
+  {
+   "shape": "SH_Serana_Hair",
+   "out": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\hair\\Hair.nif",
+   "neutral": "facegen"
+  },
+  {
+   "shape": "SH_Serana_HairHL",
+   "out": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\hair\\HairHL.nif",
+   "neutral": "facegen"
+  },
+  {
+   "shape": "SH_Serana_HairScalp",
+   "out": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\hair\\Scalp.nif",
+   "neutral": "facegen"
+  },
+  {
+   "shape": "SH_Serana_HairBraids",
+   "out": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\hair\\HairCustomBraids.nif",
+   "neutral": "facegen"
+  },
+  {
+   "shape": "SH_Serana_HairBraidsHL",
+   "out": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\hair\\HairCustomBraidsHL.nif",
+   "neutral": "facegen"
+  },
+  {
+   "shape": "SH_Serana_Eyes",
+   "out": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\eyes\\Eyes.nif",
+   "neutral": {
+    "tri": "D:\\SkyrimMod\\wabbajack\\mods\\Evigheden - SerketHetyt's Serana Overhaul\\Meshes\\actors\\character\\SerketHetyt's Serana Overhaul\\eyes\\LDD_Eye_Inner.tri"
+   }
+  },
+  {
+   "shape": "SH_Serana_EyesOuter",
+   "out": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\eyes\\EyesOuter.nif",
+   "neutral": {
+    "tri": "D:\\SkyrimMod\\wabbajack\\mods\\Evigheden - SerketHetyt's Serana Overhaul\\Meshes\\actors\\character\\SerketHetyt's Serana Overhaul\\eyes\\LDD_Eye_Outer.tri"
+   }
+  },
+  {
+   "shape": "SH_Serana_EyesAO",
+   "out": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\eyes\\EyesAO.nif",
+   "neutral": {
+    "tri": "D:\\SkyrimMod\\wabbajack\\mods\\Evigheden - SerketHetyt's Serana Overhaul\\Meshes\\actors\\character\\SerketHetyt's Serana Overhaul\\eyes\\LDD_Eye_Shadow.tri"
+   }
+  },
+  {
+   "shape": "SH_Serana_EyesCaruncula",
+   "out": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\eyes\\EyesCaruncula.nif",
+   "neutral": {
+    "tri": "D:\\SkyrimMod\\wabbajack\\mods\\Evigheden - SerketHetyt's Serana Overhaul\\Meshes\\actors\\character\\SerketHetyt's Serana Overhaul\\eyes\\LDD_Eye_Caruncula.tri"
+   }
+  },
+  {
+   "shape": "SH_Serana_EyesDummyR",
+   "out": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\eyes\\EyesDummyR.nif",
+   "neutral": {
+    "tri": "D:\\SkyrimMod\\wabbajack\\mods\\Evigheden - SerketHetyt's Serana Overhaul\\Meshes\\actors\\character\\SerketHetyt's Serana Overhaul\\eyes\\LDD_Eye_Inner_LensR.tri"
+   }
+  },
+  {
+   "shape": "SH_Serana_EyesDummyL",
+   "out": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\eyes\\EyesDummyL.nif",
+   "neutral": {
+    "tri": "D:\\SkyrimMod\\wabbajack\\mods\\Evigheden - SerketHetyt's Serana Overhaul\\Meshes\\actors\\character\\SerketHetyt's Serana Overhaul\\eyes\\LDD_Eye_Inner_LensL.tri"
+   }
+  },
+  {
+   "shape": "SH_Serana_EyelashesLower",
+   "out": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\eyes\\EyelashesLower.nif",
+   "neutral": "nearest"
+  },
+  {
+   "shape": "SH_Serana_EyelashesUpper",
+   "out": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\eyes\\EyelashesUpper.nif",
+   "neutral": "nearest"
+  },
+  {
+   "shape": "SH_SeranaEyeAO2",
+   "out": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\eyes\\EyesAO2.nif",
+   "neutral": "nearest"
+  },
+  {
+   "shape": "SH_Serana_Head",
+   "out": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\head\\femalehead.nif",
+   "neutral": {
+    "nif": "D:\\SkyrimMod\\wabbajack\\mods\\Evigheden - SerketHetyt's Serana Overhaul\\Meshes\\actors\\character\\SerketHetyt's Serana Overhaul\\body\\femalehead.nif"
+   },
+   "diffuse": "textures\\actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\head\\femalehead_makeup.dds"
+  }
+ ]
+}

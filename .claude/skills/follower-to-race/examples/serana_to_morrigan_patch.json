@@ -1,0 +1,81 @@
+{
+ "search_dirs": [
+  "D:\\SkyrimMod\\wabbajack\\mods\\Evigheden - SerketHetyt's Serana Overhaul",
+  "D:\\SkyrimMod\\wabbajack\\mods\\SC_DAI_Morrigan_SSE",
+  "D:\\SkyrimMod\\wabbajack\\Stock Game\\Data"
+ ],
+ "esl": true,
+ "description": "Lets the SC_DAI Morrigan race use Evigheden's Serana hair, eyes, brows, head and skin.",
+ "follower_plugin": "Evigheden - SerketHetyt's Serana Overhaul.esp",
+ "headparts": {
+  "SH_Serana_Hair": {
+   "model": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\hair\\Hair.nif",
+   "playable": true
+  },
+  "SH_Serana_HairHL": {
+   "model": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\hair\\HairHL.nif"
+  },
+  "SH_Serana_HairScalp": {
+   "model": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\hair\\Scalp.nif",
+   "drop_tri": true
+  },
+  "SH_Serana_HairBraids": {
+   "model": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\hair\\HairCustomBraids.nif"
+  },
+  "SH_Serana_HairBraidsHL": {
+   "model": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\hair\\HairCustomBraidsHL.nif"
+  },
+  "SH_Serana_Eyes": {
+   "model": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\eyes\\Eyes.nif",
+   "playable": true,
+   "drop_tnam": true
+  },
+  "SH_Serana_EyesOuter": {
+   "model": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\eyes\\EyesOuter.nif"
+  },
+  "SH_Serana_EyesCaruncula": {
+   "model": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\eyes\\EyesCaruncula.nif"
+  },
+  "SH_Serana_EyesDummyR": {
+   "model": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\eyes\\EyesDummyR.nif"
+  },
+  "SH_Serana_EyesDummyL": {
+   "model": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\eyes\\EyesDummyL.nif"
+  },
+  "SH_Serana_EyesAO2": {
+   "model": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\eyes\\EyesAO2.nif",
+   "drop_tri": true
+  },
+  "SH_Serana_EyesAO": {
+   "model": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\eyes\\EyesAO.nif"
+  },
+  "SH_Serana_EyelashesLower": {
+   "model": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\eyes\\EyelashesLower.nif"
+  },
+  "SH_Serana_EyelashesUpper": {
+   "model": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\eyes\\EyelashesUpper.nif"
+  },
+  "SH_Serana_Head": {
+   "model": "actors\\character\\SerketHetyt's Serana Overhaul\\MorriganPatch\\head\\femalehead.nif",
+   "playable": true
+  },
+  "SH_Serana_Brows": {
+   "playable": true
+  }
+ },
+ "race_defaults": {
+  "female": [
+   "SH_Serana_Head"
+  ]
+ },
+ "skin_arma": [
+  "SH_Serana_BodyAA",
+  "SH_Serana_HandsAA",
+  "SH_Serana_FeetAA"
+ ],
+ "output": "D:\\SkyrimMod\\wabbajack\\mods\\Evigheden - Morrigan Race Patch\\Evigheden - Morrigan Race Patch.esp",
+ "race": {
+  "plugin": "SC_DAI_Morrigan.esp",
+  "edid": "SC_DAI_Morrigan_Race"
+ }
+}
