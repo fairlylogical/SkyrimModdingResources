@@ -1,6 +1,6 @@
 ---
 name: follower-to-race
-description: Convert a Skyrim Special Edition follower/NPC replacer's custom head assets (hair, eyes, head/face, brows, lashes, FaceGen makeup, body skin) into assets a player race can use in RaceMenu - either by patching an existing custom race or by creating a new playable race cloned from a vanilla one. Use this whenever the user wants a follower's or NPC overhaul's (Serana, Lydia, any custom follower) hair, eyes, face or makeup on their player character or on a custom race, says a follower's hair/eyes "don't show up in RaceMenu", wants to "make a race out of a follower", or wants a patch between a follower replacer and a custom race mod - even if they don't mention FaceGen, head parts or plugins.
+description: Convert a Skyrim Special Edition follower/NPC replacer's custom head assets (hair, eyes, head/face, brows, lashes, FaceGen makeup, body skin) into assets a player race can use in RaceMenu - by patching an existing custom race, creating a new playable race cloned from a vanilla one, or building a fully standalone race mod (own copies of every asset, optional gameplay from e.g. Requiem's races). Also covers body-skin swaps without seams and fixing head parts that look displaced after RaceMenu sculpt/preset reloads. Use this whenever the user wants a follower's or NPC overhaul's (Serana, Lydia, any custom follower) hair, eyes, face or makeup on their player character or on a custom race, says a follower's hair/eyes "don't show up in RaceMenu", wants to "make a race out of a follower", or wants a patch between a follower replacer and a custom race mod - even if they don't mention FaceGen, head parts or plugins.
 ---
 
 # Follower head assets -> player race
@@ -23,7 +23,10 @@ something behaves unexpectedly or a case doesn't fit the defaults below.
 - Loose files. If the follower's meshes/textures are in a BSA, extract them first (e.g. BAE).
 
 Scripts live in `scripts/` next to this file. `examples/` holds the complete configs from a real conversion
-(Serana -> SC_DAI Morrigan race, and the same follower as a new Nord-based race) - copy and adapt them. Write configs and helper scripts with the Write tool rather than
+(Serana -> SC_DAI Morrigan race, and the same follower as a new Nord-based race) - copy and adapt them.
+`examples/blood_scion_standalone/` is the full standalone build (mode C: Morrigan race body + Requiem Breton
+gameplay + Serana's head, Skyrim.esm + Requiem.esp masters only), plus the script that writes a RaceMenu preset
+equivalent to importing the follower's FaceGen NIF. Their paths are the author's - adapt them. Write configs and helper scripts with the Write tool rather than
 shell heredocs: Git Bash on Windows mangles backslashes in heredocs, which silently breaks Windows paths.
 Run Python with `-I`.
 
@@ -31,8 +34,9 @@ Run Python with `-I`.
 
 ### 1. Clarify the target
 Ask (if not obvious) which follower/plugin, and whether to **(A)** patch an existing custom race (e.g. a race
-mod the user already uses) or **(B)** create a new playable race (cloned from a vanilla race, usually the follower's
-own race - `NordRace` for Serana). Put output in a new mod folder (MO2: `<instance>\mods\<Name> Patch`),
+mod the user already uses), **(B)** create a new playable race (cloned from a vanilla race, usually the follower's
+own race - `NordRace` for Serana), or **(C)** build a standalone mod that needs neither the follower nor the race
+mod (step 5b). Put output in a new mod folder (MO2: `<instance>\mods\<Name> Patch`),
 never inside the source mods.
 
 ### 2. Reconnaissance
@@ -61,6 +65,10 @@ Read the output and decide, per head part:
   tri can corrupt morphs); `drop_tnam` when the part's texture set points at missing files (the extracted mesh
   already carries FaceGen's correct textures); `playable` for main parts the user should pick (hair, eyes, brows, face).
   FaceGen shape names can differ from HDPT EditorIDs (e.g. `SH_SeranaEyeAO2` vs `SH_Serana_EyesAO2`) - map them by hand.
+- **One tri file per part.** If two parts share a tri path (typically upper + lower lashes both on vanilla
+  `EyesFemale.tri`), copy the tri once per part into the patch and point each part at its own copy (`"tri"` option in
+  `build_patch.py`, which warns about shared tris). RaceMenu stores sculpt per *tri path*: with a shared tri the
+  user's sculpt/import looks right until they save, then both parts get the same offsets on reload.
 
 ### 3. Extract meshes
 Write a config (schema at the top of `scripts/extract_headparts.py`) and run
@@ -68,7 +76,13 @@ Write a config (schema at the top of `scripts/extract_headparts.py`) and run
 mesh path (e.g. `actors\character\<follower folder>\<Race>Patch\...`) so they never overwrite the follower's files.
 The script writes SE-ready `BSDynamicTriShape` NIFs and re-verifies each against FaceGen (topology, UVs,
 textures, shader flags, alpha, partitions, bones). Eye shifts of ~1 unit and hair shifts of 0 are normal; a
-`FAILED` line is not - fix it before continuing.
+`FAILED` line is not - fix it before continuing. Extracted meshes keep the FaceGen shape names on purpose: RaceMenu's
+"import from NIF" matches the follower's FaceGen file to the character's parts by those names, which is how users
+reproduce the follower's exact face on top of the neutral parts.
+
+Prefer the follower's own parts over substitutes from other mods. Offline geometry checks can look alarming
+(Serana's FaceGen lashes appear displaced when transformed outside the game) yet render correctly in game; swapping
+them for another mod's lashes cost several broken iterations. Change a part only on in-game evidence.
 
 ### 4. Makeup (optional, usually wanted)
 RaceMenu can't reproduce hand-painted FaceGen makeup unless the race has matching tint-mask layers (many custom
@@ -97,6 +111,31 @@ It produces an ESL-flagged ESP that:
   vanilla head parts).
 
 Dump the result to sanity-check if anything looks off (the reconnaissance helpers in `esp_lib.py` parse plugins).
+The game locks plugins while it runs: if writing fails with "Permission denied", ask the user to close Skyrim
+(never kill it), and don't leave the running game's plugin pointing at files you've deleted.
+
+### 5b. Standalone variant (no dependency on the follower or race mods)
+When the user wants a self-contained mod, absorb records instead of overriding them:
+- `PatchWriter.redirect[gid] = new_local_fid` maps records from non-master plugins (the follower's head parts, a
+  custom race, its skin ARMO/ARMA/TXST) to new records in the patch; `remap_subs` then rewrites every reference.
+  Redirect references you are about to drop to 0 and remove them after remapping. Allocate FormIDs in a fixed order
+  and never reorder later - users' saves reference them.
+- Copy assets into the new mod's own folder and point meshes at it: `extract_headparts.py` `"texture_remap"`
+  rewrites texture prefixes; `scripts/retexture_nif.py` rewrites paths in an existing NIF; copy tris, skeletons and
+  textures, then verify every path in the plugin resolves inside the mod (see `examples/` and the Blood Scion build).
+- Gameplay from another race (e.g. "Breton abilities"): read the race record from the plugin that **wins** in the
+  user's load order (scan the active MO2 profile; with Requiem that is `Requiem.esp`, which replaces abilities,
+  keywords, stats and attack data) and copy SPLO/KWDA/stat fields of DATA/ATKD/VNAM/QNAM; keep cosmetic data.
+  Add a Race Compatibility SKSE json proxying that race so perk/dialogue conditions treat the new race as it.
+- Renaming later: regenerate from scratch only if no profile/save uses the old plugin name yet.
+
+### 5c. Body skin from another texture mod
+If the user wants e.g. BnP body textures, ship them as a **separate MO2 mod** that overrides the race's skin texture
+paths (copy, don't reference the texture mod's vanilla paths - another skin mod may win there). Measure seams before
+editing anything: pair boundary vertices of head/body (neck) and hands/body (wrists) by 3D position, sample every map
+(diffuse, `_sk`, `_msn`, `_s`) at their UVs and compare with the follower's own body as a baseline. Many follower
+bodies are edits of BnP that leave the neck untouched, so raw BnP is often already seamless. Only if not, blend a
+correction in with a soft mask near the seam, the way follower authors' mask PSDs do.
 
 ### 6. Tell the user how to apply it
 - Enable the follower mod, the race mod and the patch; the patch must load after both (and after anything else
@@ -105,6 +144,12 @@ Dump the result to sanity-check if anything looks off (the reconnaissance helper
   reload race defaults - this resets sliders, so suggest saving a RaceMenu preset first. Then pick the follower's
   hair/eyes/brows from the lists.
 - NPCs of that race need FaceGen regenerated in the CK to show the new parts; players don't.
+- To reproduce the follower's exact face: RaceMenu sculpt → import the follower's FaceGen NIF (matches the extracted
+  parts by shape name), then save a preset. Save and **reload** once to confirm nothing moves.
+- If a part looks displaced in game, ask for a screenshot and read the user's preset
+  (`SKSE\Plugins\CharGen\Presets\*.jslot`, `morphs.sculpt[].host`) before touching meshes: duplicate hosts or stale
+  entries keyed to a tri path the part now uses explain most "wrong position" reports. Fix with per-part tris and,
+  if needed, write a corrected *copy* of the preset (never overwrite the user's original).
 - Mention honest caveats: hair was fitted to the follower's head and may clip on very different head shapes;
   `nearest`-neutralised parts are approximations; baked makeup can't be removed in RaceMenu.
 

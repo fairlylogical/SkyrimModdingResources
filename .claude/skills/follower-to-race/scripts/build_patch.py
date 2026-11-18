@@ -19,8 +19,11 @@ config:
   "headparts": {                                  # follower HDPT EditorIDs to make usable by the race
     "Follower_Hair":  {"model": "actors\\character\\X\\Patch\\hair\\Hair.nif", "playable": true},
     "Follower_Scalp": {"model": "...", "drop_tri": true},       # tri file missing / wrong vertex count
-    "Follower_Eyes":  {"model": "...", "playable": true, "drop_tnam": true}
+    "Follower_Eyes":  {"model": "...", "playable": true, "drop_tnam": true},
+    "Follower_LashesUpper": {"model": "...", "tri": "actors\\character\\X\\Patch\\eyes\\LashesUpper.tri"}
   },                                              # HNAM extra parts of listed parts are included automatically
+  # "tri" replaces the part's NAM1 path. Use it whenever two parts on one character share a tri file: RaceMenu
+  # keys sculpt by tri path, so shared tris merge their sculpt on save (copy the tri per part first).
   "race_defaults": {"female": ["Follower_Head"]}, # replace the race's default head part of the same type
   "skin_arma": ["Follower_BodyAA", "Follower_HandsAA", "Follower_FeetAA"]   # optional: let the race wear the skin
 }
@@ -119,6 +122,8 @@ for edid, opt in todo.items():
             continue
         elif st == 'MODL' and opt.get('model'):
             rv = zstr(opt['model'])
+        elif st == 'NAM1' and opt.get('tri') and not opt.get('drop_tri'):
+            rv = zstr(opt['tri'])
         out.append((st, rv))
     if opt.get('model') and not any(st == 'MODL' for st, _ in out):
         names = [st for st, _ in out]               # HDPT order: EDID, FULL, MODL, ...
@@ -129,7 +134,19 @@ for edid, opt in todo.items():
     if opt.get('playable'):
         flags &= ~0x4                             # HDPT record flag 0x4 = Non-Playable
     W.add('HDPT', flags, W.remap(F, fid), out)
-    print('HDPT %08X %-30s %s' % (W.remap(F, fid), edid, ', '.join(k for k in ('model', 'playable', 'drop_tri', 'drop_tnam') if opt.get(k))))
+    print('HDPT %08X %-30s %s' % (W.remap(F, fid), edid, ', '.join(k for k in ('model', 'tri', 'playable', 'drop_tri', 'drop_tnam') if opt.get(k))))
+
+# RaceMenu keys sculpt by tri path: warn when parts that will sit on the same character still share one
+tri_users = {}
+for rec in W.groups.get('HDPT', []):
+    subs = __import__('esp_lib').parse_subs(rec[24:])
+    e = zstr_val(Plugin.sub(subs, 'EDID'))
+    for st, v in subs:
+        if st == 'NAM1':
+            tri_users.setdefault(zstr_val(v).lower(), []).append(e)
+for t, users in tri_users.items():
+    if len(users) > 1:
+        print('  WARNING: %s share %s - RaceMenu will merge their sculpt on save; give each its own tri ("tri" option)' % (users, t))
 
 # ---------------------------------------------------------------- race
 t, rflags, rsubs = race_rec

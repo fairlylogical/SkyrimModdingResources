@@ -51,6 +51,25 @@ CK applies the NPC's chargen sliders (tri morphs) to every part that has a tri, 
   whose topology you can't use: subtract the offset of the nearest neutralised eye vertices (inverse-distance
   weighted, k=4). Their shift should come out ~equal to the eyes' shift; if not, inspect.
 
+- **Give every head part its own tri path - RaceMenu sculpt is keyed by tri path.** Presets
+  (`SKSE\Plugins\CharGen\Presets\*.jslot`, `morphs.sculpt[].host`) and saves store sculpt per *tri file path* + vertex
+  index, not per head part. Serana's upper and lower lashes both used vanilla `EyesFemale.tri`: RaceMenu's
+  "import from FaceGen NIF" placed them perfectly, but on save both parts' sculpt collapsed into one host entry
+  (the jslot showed two identical `EyesFemale.tri` entries), so after reload both lids got the same offsets and the
+  lashes floated off the eyes. Fix: copy the tri per part (`EyelashesLower.tri`, `EyelashesUpper.tri`, ...) and point
+  each HDPT's NAM1 at its own copy. Any shared tri among parts on the same character is a bug waiting for a sculpt.
+  When a part looks displaced in game, read the user's jslot first and look for duplicate hosts.
+- **Keep FaceGen shape names on extracted meshes.** RaceMenu's import matches source FaceGen shapes to the
+  character's parts by name; extracted meshes that keep `SH_<Follower>_*` names import cleanly.
+- **Don't trust "static" geometry checks over in-game evidence for FaceGen parts.** Serana's FaceGen lash shapes look
+  displaced when their vertices are transformed offline (most vertices several units inside the head), yet imported
+  onto the extracted lashes they render correctly in game. A detour replacing them with CVEO/LDD lash meshes cost
+  several iterations (chargen tri folding them behind the cornea, offsets from stale sculpt). Prefer the follower's
+  own parts; if a part looks wrong in game, ask for a screenshot and the jslot before re-engineering the mesh.
+- Useful leftovers from that detour: `scripts/retexture_nif.py` (rewrite NIF texture paths) and
+  `scripts/normalize_headpart.py` (bake a non-identity shape transform into vertices, recomputing skin-to-bone).
+  LDD/CVEO lashes use vanilla eye vertex order; LDD meshes park unused vertices hundreds of units away.
+
 ## 5. Face tint / makeup math
 SE FaceGen shader (Community Shaders Lighting.hlsl, GetFacegenBaseColor):
 `out = (b*b + 2*t*b*(1-b)) * detail` with `detail ≈ 1` by default; t = 0.5 is identity.
