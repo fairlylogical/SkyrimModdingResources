@@ -57,7 +57,9 @@ Read the output and decide, per head part:
 - **Neutral pose.** FaceGen geometry has the NPC's sculpt baked in; a player part must be neutral or it
   misaligns with the player's face:
   - parts with no `.tri` (hair, most hats/extras) -> `facegen` (CK doesn't morph them, already neutral)
-  - eyes/brows/etc. whose `.tri` vertex count matches -> `{"tri": path}` (tri base = neutral)
+  - eyes/brows/etc. whose `.tri` vertex count matches -> `{"tri": path}` (tri base = neutral) - but some tris
+    (the head's, Expressive Facial Animation's `EyesFemale.tri`) are in head-bone space; extraction now fails any
+    part shifted >= 25 units. For LDD/CVEO eyes and lashes use `{"nif": <CVEO neutral mesh>}` instead
   - small parts without a usable tri (lashes, AO/shadow layers) -> `nearest` (borrows the eyes' offsets)
   - the face itself -> `{"nif": standalone head}` when a neutral head with identical topology exists; it keeps
     FaceGen's UVs/shader/textures (the custom face textures were painted for those UVs)
@@ -107,8 +109,20 @@ It produces an ESL-flagged ESP that:
   defaults is optional;
 - optionally adds the race to the follower's skin armor addons (`skin_arma`);
 - for a new race: clones the source race, renames it, sets Playable, sets Armor Race to the clone source (vanilla
-  armor works without extra mods) and writes a Race Compatibility SKSE json (proxies for dialogue/vampirism/
-  vanilla head parts).
+  armor works without extra mods), **drops the racial presets** (RPRM/RPRF) and writes a Race Compatibility SKSE
+  json (proxies for dialogue/vampirism/vanilla head parts).
+
+New-race pitfalls, each of which cost an in-game round trip (details in `references/engine-notes.md`):
+- **Racial presets.** Vanilla races carry preset NPCs (RPRM/RPRF). Chargen applies one to new characters, so they got
+  vanilla eyes/hair and RaceMenu never offered the follower's parts. Strip them from any clone of a vanilla race.
+- **Skin addons vs Armor Race.** The engine matches skin ARMAs against the race's *Armor Race*. When that is the
+  clone source, the skin ARMAs must keep the source race (and its vampire race) in their additional races, plus the
+  new race. With the new race alone the naked body was invisible and armor skin fell back to vanilla textures.
+- **Name the playable parts** (FULL "<Follower> Hair/Eyes/Brows/Head") so they can be found in RaceMenu's long lists.
+- **Localized strings.** Records copied from `Skyrim.esm` (vanilla mouth, race FULL/DESC) carry string-table IDs;
+  in a non-localized plugin they show as junk. Replace or drop FULL/DESC on every copied vanilla record.
+- When something works in one build and not another, **diff the plugins record by record** against the working one
+  (`examples/vayne_darkelf_standalone/compare_*.py`) before theorising - two guesses here were wrong.
 
 Dump the result to sanity-check if anything looks off (the reconnaissance helpers in `esp_lib.py` parse plugins).
 The game locks plugins while it runs: if writing fails with "Permission denied", ask the user to close Skyrim
@@ -123,6 +137,11 @@ When the user wants a self-contained mod, absorb records instead of overriding t
 - Copy assets into the new mod's own folder and point meshes at it: `extract_headparts.py` `"texture_remap"`
   rewrites texture prefixes; `scripts/retexture_nif.py` rewrites paths in an existing NIF; copy tris, skeletons and
   textures, then verify every path in the plugin resolves inside the mod (see `examples/` and the Blood Scion build).
+- `examples/vayne_darkelf_standalone/` is a standalone race cloned from a **vanilla** race (DarkElfRace) whose source
+  follower plugin couldn't be a master (its own masters weren't installed): absorbs head parts, skin ARMO/ARMA/TXST,
+  and a vanilla mouth copy; `verify_plugin.py` checks every FormID and path.
+- If the follower plugin has **missing masters** (check them against the user's mod folders), never make it a master
+  of the patch - go standalone and read it with `Plugin()` directly (no master resolution needed).
 - Gameplay from another race (e.g. "Breton abilities"): read the race record from the plugin that **wins** in the
   user's load order (scan the active MO2 profile; with Requiem that is `Requiem.esp`, which replaces abilities,
   keywords, stats and attack data) and copy SPLO/KWDA/stat fields of DATA/ATKD/VNAM/QNAM; keep cosmetic data.

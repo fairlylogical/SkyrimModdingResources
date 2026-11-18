@@ -217,8 +217,12 @@ if 'new_race' in cfg:
             rn[-1][1] = u32(clone_local)
         else:
             result.append(['RNAM', u32(clone_local)])
-    if not any(x[0] == 'NAM8' for x in result):
-        result.insert(len(result) - 1, ['NAM8', u32(clone_local)])
+    # No Morph Race (NAM8): a new playable race has its own head data. (Not the cause of missing RaceMenu parts -
+    # the working Blood Scion race has NAM8 - just unnecessary.)
+    result = [x for x in result if x[0] != 'NAM8']
+    # Drop racial presets (RPRM/RPRF): chargen applies a preset NPC's head parts (vanilla race parts) to new
+    # characters, so the new race's own hair/eyes never showed up in RaceMenu (Vayne, cloned from DarkElfRace).
+    result = [x for x in result if x[0] not in ('RPRM', 'RPRF')]
     rflags &= ~0x40000
 W.add('RACE', rflags, race_out_fid, [tuple(x) for x in result])
 

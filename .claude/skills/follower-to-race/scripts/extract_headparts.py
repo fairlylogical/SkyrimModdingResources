@@ -109,6 +109,11 @@ def main(cfg):
                 sys.exit('%s: tri has %d verts, FaceGen shape %d - use "nearest" or "facegen" instead'
                          % (p['shape'], len(base), len(sh[p['shape']].verts)))
             neutral[p['shape']] = [tuple(v) for v in base]
+        elif isinstance(n, dict) and 'nif' in n:      # neutral NIF parts can also drive "nearest"
+            src = NifFile(n['nif'])
+            g = next((s for s in src.shapes if s.name == n.get('shape')), src.shapes[0])
+            if len(g.verts) == len(sh[p['shape']].verts):
+                neutral[p['shape']] = [tuple(v) for v in g.verts]
 
     samples = []
     for name in cfg.get('delta_samples') or list(neutral):
@@ -207,6 +212,8 @@ def main(cfg):
             checks['shader_flags'] = (s.shader.properties.Shader_Type, s.shader.properties.Shader_Flags_1, s.shader.properties.Shader_Flags_2) == \
                                      (fgs.shader.properties.Shader_Type, fgs.shader.properties.Shader_Flags_1, fgs.shader.properties.Shader_Flags_2)
         shift = max(max(abs(a - b) for a, b in zip(u, w)) for u, w in zip(s.verts, fgs.verts))
+        # a sculpt is a few units; ~120 means the neutral source is in head-bone space (e.g. EFA's EyesFemale.tri)
+        checks['shift<25'] = shift < 25
         bad = [k for k, v in checks.items() if not v]
         ok &= not bad
         print('%-28s -> %-40s %-8s shift-from-FaceGen=%.3f %s' % (p['shape'], os.path.basename(dst),

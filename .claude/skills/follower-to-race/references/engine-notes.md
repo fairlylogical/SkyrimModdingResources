@@ -30,6 +30,14 @@ so the head mesh always comes from these defaults (a player's chosen parts are s
 in RaceMenu reloads the defaults).
 - RACE DATA flags (u32 at offset 32): 0x1 Playable.
 - RACE RNAM = Armor Race (armor addons are looked up for this race), NAM8 = Morph Race.
+  **Strip racial presets (RPRM/RPRF) when cloning a vanilla race.** They are vanilla preset NPCs; chargen applies
+  one to new characters, giving them vanilla eyes/hair, and Vayne's own hair/eyes never appeared in RaceMenu even
+  though her HDPT records matched the working Blood Scion ones (whose source race had no presets). An earlier guess
+  blamed the Morph Race (NAM8) - Blood Scion has NAM8 and works, so that was not it. Diff against a known-working
+  race before guessing.
+  **Consequence for skin ARMAs:** if the new race's Armor Race is the clone source (e.g. DarkElfRace), the race's own
+  skin ARMAs must list that source race too (keep the follower's original additional races, then add the new race).
+  Listing only the new race made the naked body invisible and armor skin fell back to vanilla textures (Vayne, 2026-11).
 - Tint layers: if a race only has SkinTone, no RaceMenu preset can reproduce makeup/lipstick/eyeliner.
 - Race Compatibility SKSE (RCS) json in `SKSE\Plugins\RCS\*.json` proxies a custom race to vanilla races for
   dialogue/vampirism/armor and (`"headPart": "Human"`) vanilla head-part lists. Races are named by EditorID.
@@ -51,6 +59,10 @@ CK applies the NPC's chargen sliders (tri morphs) to every part that has a tri, 
   whose topology you can't use: subtract the offset of the nearest neutralised eye vertices (inverse-distance
   weighted, k=4). Their shift should come out ~equal to the eyes' shift; if not, inspect.
 
+- **Expressive Facial Animation's `EyesFemale.tri` is in head-bone space too** (base verts ~120 units below FaceGen
+  eyes). Using it as `{"tri"}` neutral put the eyes at the neck (Vayne, 2026-11). For LDD/CVEO eyes use
+  `{"nif": CVEO LDD_FemaleEyes.nif}` / `LDDLashes\A\LDD_FemaleLashes.nif` instead (same topology as FaceGen); nif-mode
+  parts can now serve as `delta_samples` for `nearest`. extract_headparts fails any part shifted >= 25 units.
 - **Give every head part its own tri path - RaceMenu sculpt is keyed by tri path.** Presets
   (`SKSE\Plugins\CharGen\Presets\*.jslot`, `morphs.sculpt[].host`) and saves store sculpt per *tri file path* + vertex
   index, not per head part. Serana's upper and lower lashes both used vanilla `EyesFemale.tri`: RaceMenu's
