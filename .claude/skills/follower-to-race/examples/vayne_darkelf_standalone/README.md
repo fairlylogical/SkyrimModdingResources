@@ -13,6 +13,10 @@ What went wrong in game, in order, and the fix now in these scripts:
 3. Hair/eyes not in RaceMenu and not default: vanilla racial presets (RPRM/RPRF) were inherited from DarkElfRace.
    Removed. (Removing NAM8 was an earlier, wrong guess - kept out, harmless.)
 4. Copied vanilla mouth carried a localized FULL id -> dropped. Playable parts got FULL names.
+5. The user couldn't enter Vayne's skin tone (#364C59) in RaceMenu (no hex input). Added it as an extra female
+   SkinTone preset "Vayne", first and default (`add_skin_tone_preset`); the five Dark Elf tones remain.
+
+`dump_skintone.py` prints the race's SkinTone layers with each preset's colour.
 
 `compare_*.py` diff this build against the working Blood Scion build - that diff found cause 3.
 `build_plugin.py` keeps a retired FormID slot (removed nose piercing) so later ids never shift.

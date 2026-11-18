@@ -108,6 +108,11 @@ It produces an ESL-flagged ESP that:
   picker, so the head always comes from the race defaults. Hair/eyes/brows become pickable anyway; making them
   defaults is optional;
 - optionally adds the race to the follower's skin armor addons (`skin_arma`);
+- optionally adds the follower's **skin tone** (`skin_tone`: the NPC's QNAM, which `inspect_follower.py` prints as hex,
+  or an explicit `hex`) as an **extra** preset of the race's SkinTone tint layer, first in the list and by default the
+  race's default tone. The race's own presets stay. Offer this whenever the follower's tone matters: RaceMenu has no
+  hex entry, so a preset is the only way for the player to get the exact colour. Baked makeup excludes complexion
+  (step 4), so without it the face falls back to whatever tone the player picks;
 - for a new race: clones the source race, renames it, sets Playable, sets Armor Race to the clone source (vanilla
   armor works without extra mods), **drops the racial presets** (RPRM/RPRF) and writes a Race Compatibility SKSE
   json (proxies for dialogue/vampirism/vanilla head parts).

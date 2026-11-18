@@ -39,6 +39,13 @@ in RaceMenu reloads the defaults).
   skin ARMAs must list that source race too (keep the follower's original additional races, then add the new race).
   Listing only the new race made the naked body invisible and armor skin fell back to vanilla textures (Vayne, 2026-11).
 - Tint layers: if a race only has SkinTone, no RaceMenu preset can reproduce makeup/lipstick/eyeliner.
+- Tint layer layout (per sex, after the head-part data): `TINI` (u16 layer index), `TINT` (mask path), `TINP` (mask
+  type), `TIND` (default colour, CLFM), then presets as (`TINC` CLFM, `TINV` float strength, `TIRS` u16 unique id)*.
+  The SkinTone layer's mask is `...\TintMasks\SkinTone.dds`. An NPC's tone is its `QNAM` (3 floats 0-1, "texture
+  lighting"), which the CK keeps equal to the NPC's SkinTone layer colour (Vayne: QNAM and layer both #364C59).
+  RaceMenu has no hex entry for colours, so to give players a follower's exact tone add a playable CLFM
+  (`CNAM` RGBA bytes, `FNAM` 1) as a preset - `esp_lib.add_skin_tone_preset` / build_patch `skin_tone`. A vanilla
+  default can be weaker than 100% (DarkElfRace female default: #305F65 at 0.42); give the follower preset 1.0.
 - Race Compatibility SKSE (RCS) json in `SKSE\Plugins\RCS\*.json` proxies a custom race to vanilla races for
   dialogue/vampirism/armor and (`"headPart": "Human"`) vanilla head-part lists. Races are named by EditorID.
 

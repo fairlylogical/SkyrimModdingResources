@@ -25,12 +25,17 @@ config:
   # "tri" replaces the part's NAM1 path. Use it whenever two parts on one character share a tri file: RaceMenu
   # keys sculpt by tri path, so shared tris merge their sculpt on save (copy the tri per part first).
   "race_defaults": {"female": ["Follower_Head"]}, # replace the race's default head part of the same type
-  "skin_arma": ["Follower_BodyAA", "Follower_HandsAA", "Follower_FeetAA"]   # optional: let the race wear the skin
+  "skin_arma": ["Follower_BodyAA", "Follower_HandsAA", "Follower_FeetAA"],  # optional: let the race wear the skin
+  "skin_tone": {"npc": "Follower_NPC", "name": "Follower", "sex": "female", "default": true}
+                   # optional: add the follower's skin tone (NPC QNAM, or "hex": "#364C59") as an EXTRA preset of the
+                   # race's SkinTone tint layer - first in the list and, with "default", the race's default.
+                   # RaceMenu has no hex entry, so this is the only way for players to get the exact tone.
 }
 """
 import json, os, struct, sys
 sys.path.insert(0, os.path.dirname(__file__))
-from esp_lib import Plugin, PluginSet, PatchWriter, zstr, zstr_val, u32, HDPT_TYPES
+from esp_lib import (Plugin, PluginSet, PatchWriter, zstr, zstr_val, u32, HDPT_TYPES,
+                     npc_skin_tone, add_skin_tone_preset, clfm_subs)
 
 cfg = json.load(open(sys.argv[1], encoding='utf-8'))
 ps = PluginSet(cfg['search_dirs'])
@@ -224,6 +229,23 @@ if 'new_race' in cfg:
     # characters, so the new race's own hair/eyes never showed up in RaceMenu (Vayne, cloned from DarkElfRace).
     result = [x for x in result if x[0] not in ('RPRM', 'RPRF')]
     rflags &= ~0x40000
+
+# ---------------------------------------------------------------- follower skin tone as an extra preset
+st_cfg = cfg.get('skin_tone')
+if st_cfg:
+    if 'hex' in st_cfg:
+        h = st_cfg['hex'].lstrip('#')
+        rgb = tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
+    else:
+        rgb = npc_skin_tone(F.get(st_cfg['npc'])[1][2])
+        if rgb is None:
+            sys.exit('skin_tone: NPC %s has no QNAM skin tone; pass "hex" instead' % st_cfg['npc'])
+    clfm_fid = W.new_fid()
+    label = st_cfg.get('name', race_edid)
+    W.add('CLFM', 0, clfm_fid, clfm_subs('%s_SkinTone' % race_edid, label, rgb))
+    if not add_skin_tone_preset(result, clfm_fid, st_cfg.get('sex', 'female'), st_cfg.get('default', True)):
+        sys.exit('skin_tone: race has no %s SkinTone tint layer' % st_cfg.get('sex', 'female'))
+    print('RACE skin tone preset "%s" #%02X%02X%02X added (default=%s)' % ((label,) + rgb + (st_cfg.get('default', True),)))
 W.add('RACE', rflags, race_out_fid, [tuple(x) for x in result])
 
 # ---------------------------------------------------------------- skin

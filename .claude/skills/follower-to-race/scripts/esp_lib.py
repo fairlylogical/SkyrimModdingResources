@@ -118,6 +118,50 @@ class PluginSet:
         return self.cache[key]
 
 
+# ------------------------------------------------------------------ skin tone
+def npc_skin_tone(subs):
+    """(r, g, b) 0-255 skin tone of an NPC_ record: QNAM 'texture lighting' (3 floats 0-1), which the CK keeps equal to
+    the NPC's SkinTone tint-layer colour. None if absent."""
+    q = Plugin.sub(subs, 'QNAM')
+    if not q or len(q) < 12:
+        return None
+    return tuple(max(0, min(255, round(c * 255))) for c in struct.unpack_from('<3f', q))
+
+
+def add_skin_tone_preset(race_subs, clfm_fid, sex='female', default=True, strength=1.0):
+    """Insert colour form `clfm_fid` as the FIRST preset of the race's SkinTone tint layer for `sex` (in place, on a
+    list of [type, bytes] pairs) and optionally make it the layer's default (TIND). The race's other presets stay.
+    Returns True if the layer was found. Head data: NAM0 MNAM ... (male tints) NAM0 FNAM ... (female tints)."""
+    want = 'MNAM' if sex == 'male' else 'FNAM'
+    cur_sex, in_head, on, tind_k, tinc_k = None, False, False, None, None
+    for k, (st, v) in enumerate(race_subs):
+        if st == 'NAM0':
+            in_head = True
+        if in_head and st in ('MNAM', 'FNAM'):
+            cur_sex = st
+        if st == 'TINI':
+            on = False
+        if st == 'TINT' and cur_sex == want and zstr_val(v).lower().endswith('skintone.dds'):
+            on = True
+        if on and st == 'TIND' and tind_k is None:
+            tind_k = k
+        if on and st == 'TINC' and tinc_k is None:
+            tinc_k = k
+    if tinc_k is None:
+        return False
+    next_tirs = max([struct.unpack('<H', v)[0] for st, v in race_subs if st == 'TIRS'] + [0]) + 1
+    if default and tind_k is not None:
+        race_subs[tind_k][1] = u32(clfm_fid)
+    race_subs[tinc_k:tinc_k] = [['TINC', u32(clfm_fid)], ['TINV', struct.pack('<f', strength)],
+                                ['TIRS', struct.pack('<H', next_tirs)]]
+    return True
+
+
+def clfm_subs(edid, name, rgb):
+    """Subrecords of a playable colour form (CLFM): CNAM = RGBA bytes, FNAM 1 = playable."""
+    return [('EDID', zstr(edid)), ('FULL', zstr(name)), ('CNAM', bytes(tuple(rgb) + (0,))), ('FNAM', u32(1))]
+
+
 # ------------------------------------------------------------------ writing
 def zstr(s):
     return s.encode('cp1252') + b'\0'
@@ -144,7 +188,7 @@ def group_bytes(label, recs):
 
 
 # Top-level group order used by the game/CK for the types we emit.
-GROUP_ORDER = ['TXST', 'HDPT', 'RACE', 'ARMO', 'FLST', 'ARMA']
+GROUP_ORDER = ['TXST', 'HDPT', 'RACE', 'ARMO', 'FLST', 'ARMA', 'CLFM']
 
 VANILLA_ESM = ['skyrim.esm', 'update.esm', 'dawnguard.esm', 'hearthfires.esm', 'dragonborn.esm']
 

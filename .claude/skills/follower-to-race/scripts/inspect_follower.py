@@ -5,7 +5,7 @@ usage: python inspect_follower.py --plugin <follower.esp> --mod-dir <follower mo
 """
 import argparse, os, struct, sys
 sys.path.insert(0, os.path.dirname(__file__))
-from esp_lib import Plugin, PluginSet, HDPT_TYPES, zstr_val, gid_str
+from esp_lib import Plugin, PluginSet, HDPT_TYPES, zstr_val, gid_str, npc_skin_tone
 from tools import setup_pynifly, LooseFiles
 
 ap = argparse.ArgumentParser()
@@ -42,6 +42,8 @@ origin, obj = P.file_of(fid), fid & 0xFFFFFF
 print('\n== NPC %s  (FaceGen key: %s / %08X)' % (zstr_val(Plugin.sub(npc_subs, 'EDID')), origin, obj))
 race = struct.unpack('<I', Plugin.sub(npc_subs, 'RNAM'))[0]
 print('race:', gid_str(P.gid(race)), ' skin WNAM:', '%08X' % struct.unpack('<I', Plugin.sub(npc_subs, 'WNAM'))[0] if Plugin.sub(npc_subs, 'WNAM') else None)
+tone = npc_skin_tone(npc_subs)
+print('skin tone (QNAM): %s' % ('#%02X%02X%02X -> "skin_tone" in build_patch adds it as a race preset' % tone if tone else 'none'))
 
 fg_rel = 'meshes\\actors\\character\\facegendata\\facegeom\\%s\\%08x.nif' % (origin.lower(), obj)
 ft_rel = 'textures\\actors\\character\\facegendata\\facetint\\%s\\%08x.dds' % (origin.lower(), obj)

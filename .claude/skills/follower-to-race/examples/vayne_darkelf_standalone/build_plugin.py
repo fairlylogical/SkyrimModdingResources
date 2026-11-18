@@ -3,7 +3,8 @@
 FormIDs are allocated in a fixed order - never reorder (saves reference them)."""
 import json, os, struct, sys
 sys.path.insert(0, r"C:\Users\fairl\.claude\skills\follower-to-race\scripts")
-from esp_lib import Plugin, PatchWriter, FORMID_FIELDS, HDPT_TYPES, zstr, zstr_val, u32
+from esp_lib import (Plugin, PatchWriter, FORMID_FIELDS, HDPT_TYPES, zstr, zstr_val, u32,
+                     npc_skin_tone, add_skin_tone_preset, clfm_subs)
 
 MODS = r"D:\SkyrimMod\wabbajack\mods"
 OUT = os.path.join(MODS, "Vayne Race")
@@ -45,6 +46,8 @@ arma = {e: W.new_fid() for e in ('SH_Vayne_BodyAA', 'SH_Vayne_HandsAA', 'SH_Vayn
 for e, f in arma.items():
     W.redirect[gid(e)] = f
 armo_fid = W.new_fid(); W.redirect[gid('SH_Vayne_Body')] = armo_fid
+skintone_fid = W.new_fid()          # CLFM: Vayne's NPC skin tone (QNAM / SkinTone tint layer of Vayne_CSVP)
+VAYNE_SKIN = npc_skin_tone(VD.get('Vayne_CSVP')[1][2])     # #364C59
 for e in ('SH_Vayne_Eyes_tex', 'SH_Vayne_AO_tex', 'SH_Vayne_Eyelashes_tex', 'SH_Vayne_Brows_tex',
           'SH_Vayne_Head_tex', 'SH_Vayne_Ears_tex'):
     W.redirect[gid(e)] = 0          # TNAMs dropped (meshes carry the textures); head gets our makeup TXST
@@ -151,6 +154,9 @@ for x in out:
     if x[0] == 'EDID': x[1] = zstr('VR_Skin')
 W.add('ARMO', fl, armo_fid, out)
 
+# ---------------------------------------------------------------- Vayne skin tone colour
+W.add('CLFM', 0, skintone_fid, clfm_subs('VR_SkinToneVayne', 'Vayne', VAYNE_SKIN))
+
 # ---------------------------------------------------------------- race (clone of DarkElfRace)
 rfid, (t, rflags, rsubs) = SKY.get('DarkElfRace')
 race = [[st, v] for st, v in W.remap_subs(SKY, 'RACE', rsubs)]
@@ -191,6 +197,9 @@ race = [x for x in race if x[1] is not None]
 # player, so new characters got vanilla Dark Elf eyes/hair and RaceMenu showed Dark Elf lists without Vayne's parts.
 # Blood Scion (cloned from a race with no presets) never had the problem.
 race = [x for x in race if x[0] not in ('RPRM', 'RPRF')]
+
+# Female SkinTone tint layer: Vayne's tone as an extra preset, first in the list and the default.
+assert add_skin_tone_preset(race, skintone_fid, 'female', default=True), 'female SkinTone layer not found'
 data = bytearray(Plugin.sub(race, 'DATA'))
 struct.pack_into('<I', data, 32, struct.unpack_from('<I', data, 32)[0] | 0x1)   # playable
 for x in race:
